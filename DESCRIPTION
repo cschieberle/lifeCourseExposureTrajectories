@@ -1,0 +1,20 @@
+Package: lifeCourseExposureTrajectories
+Title: Determine life-long exposure accummulation to multiple stressors based on
+    estimated lifecourse trajectories
+Version: 0.0.0.9000
+Authors@R: person("Christian", "Schieberle", email = "cs@ier.uni-stuttgart.de", role = c("aut", "cre"))
+Description: This package supports the estimation of individual or population
+    life trajectories based on socio-economicm specifics, gender, age etc. It make
+    heavy use of the TraMineR package do estimate trajectories of life based on
+    statistics of income and living conditions. Combining the life trajectories
+    with time-use/time-activity patterns and information on location and individual
+    habits allows for an estimation of exposure to multiple stressors specific to
+    the situation in a certain stage of life. The package was developed in the scope
+    of the HEALS project at IER, University of Stuttgart.
+Depends:
+    R (>= 3.2.3)
+License: Don't know yet... Not currently intended to be used by someone else but
+    myself :)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
