@@ -12,6 +12,11 @@ Description: This package supports the estimation of individual or population
     the situation in a certain stage of life. The package was developed in the scope
     of the HEALS project at IER, University of Stuttgart.
 Depends:
+    caret
+    randomForest
+    igraph
+    data.table
+    TraMineR
     R (>= 3.2.3)
 License: Don't know yet... Not currently intended to be used by someone else but
     myself :)
