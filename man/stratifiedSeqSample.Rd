@@ -9,7 +9,7 @@ stratifiedSeqSample(data.rshp, factor = 0.1)
 \arguments{
 \item{data.rshp}{}
 
-\item{factor}{The relative sample size (defaults to 0.1, i.e. 10%).}
+\item{factor}{The relative sample size (defaults to 0.1).}
 }
 \description{
 Whenever there are too many sequences, difficulties may arise when the distance matrix is being calculated.
