@@ -9,9 +9,9 @@ determineSeqTree(data.rshp.subset, dist.method = "OM", dist.indel = 1)
 \arguments{
 \item{data.rshp.subset}{}
 
-\item{dist.method}{See \link[TraMineR]{seqdist} for details.}
+\item{dist.method}{See \code{\link[TraMineR]{seqdist}} for details.}
 
-\item{dist.indel}{See \link[TraMineR]{seqdist} for details.}
+\item{dist.indel}{See \code{\link[TraMineR]{seqdist}} for details.}
 }
 \description{
 Determines the sequence tree.

@@ -83,7 +83,8 @@ findNodeById <- function(node, node.id) {
   return(NULL)
 }
 
-#' Determines corresponding leaf node in the sequence dissimilarity tree for a given set of characteristics (age, sex, etc.).
+#' Determines corresponding leaf node in the sequence dissimilarity tree for a
+#' given set of characteristics (age, sex, etc.).
 #'
 #' @param age age
 #' @param sex sex

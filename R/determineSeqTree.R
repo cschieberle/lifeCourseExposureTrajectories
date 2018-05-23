@@ -3,8 +3,8 @@ library(TraMineR)
 #' Determines the sequence tree.
 #' 
 #' @param data.rshp.subset 
-#' @param dist.method See \link[TraMineR]{seqdist} for details.
-#' @param dist.indel See \link[TraMineR]{seqdist} for details.
+#' @param dist.method See \code{\link[TraMineR]{seqdist}} for details.
+#' @param dist.indel See \code{\link[TraMineR]{seqdist}} for details.
 #' 
 #' @export
 #
