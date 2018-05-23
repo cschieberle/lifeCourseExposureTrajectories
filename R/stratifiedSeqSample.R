@@ -9,7 +9,7 @@ library(WeightedCluster)
 #' Here, a stratified sub-sampling approach is follows. This ensures that sequence distribution is maintained. 
 #' 
 #' @param data.rshp 
-#' @param factor The relative sample size (defaults to 0.1, i.e. 10%).
+#' @param factor The relative sample size (defaults to 0.1).
 #' @export
 #
 stratifiedSeqSample <- function(data.rshp, factor = 0.1) {
