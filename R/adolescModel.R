@@ -28,7 +28,7 @@ adolescModel <- function(cs.data.all) {
   typeof(cs.data.for.rf$ECON.STATUS.CURR.SELFDEF)
   
   # fit the randomforest model
-  model <- randomForest(
+  model <- randomForest::randomForest(
     as.factor(CURRENT.EDU.TYPE.LABEL) ~ SEX + TOT.DISP.HH.INCOME + ECON.STATUS.CURR.SELFDEF,
     data = cs.data.for.rf,
     na.action = na.omit,

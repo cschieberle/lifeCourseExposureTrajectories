@@ -49,8 +49,8 @@ simulate <- function(df, st, indiv.age, indiv.sex, indiv.activity, AGE.STEP = 3)
   orig.activity <- indiv.activity
   
   while (indiv.age <= 82) {
-    node.id <- lifeExposureTrajectories::getNodeId(df, indiv.age, indiv.sex)
-    node <- lifeExposureTrajectories::findNodeById(st$root, node.id)
+    node.id <- getNodeId(df, indiv.age, indiv.sex)
+    node <- findNodeById(st$root, node.id)
     
     # pick only the sequences that are in the node, and...
     potential.seq <- data.frame(data.seq[ node$info$ind, ])
@@ -114,8 +114,8 @@ simulate <- function(df, st, indiv.age, indiv.sex, indiv.activity, AGE.STEP = 3)
   while ((indiv.age - AGE.STEP) >= 16) {
     indiv.age <- indiv.age - AGE.STEP
     
-    node.id <- lifeExposureTrajectories::getNodeId(df, indiv.age, indiv.sex)
-    node <- lifeExposureTrajectories::findNodeById(st$root, node.id)
+    node.id <- getNodeId(df, indiv.age, indiv.sex)
+    node <- findNodeById(st$root, node.id)
     
     # pick only the sequences that are in the node, and...
     potential.seq <- data.frame(data.seq[ node$info$ind, ])
