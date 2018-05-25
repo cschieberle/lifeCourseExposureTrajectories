@@ -4,7 +4,7 @@ library(parallel)
 #'
 #' @export
 #
-defaultConfig <- function(path = ".", sample.size = 1000) {
+defaultConfig <- function(path = ".", num.sim = 100, sample.size = 1000) {
   config <- new.env()
   
   config[["PATH"]] <- path
@@ -14,7 +14,7 @@ defaultConfig <- function(path = ".", sample.size = 1000) {
   config[["CLUSTER_TYPE"]] <- "PSOCK"
   
   config[["SAMPLE_SIZE"]] <- sample.size
-  config[["NUM_SIM"]] <- 100
+  config[["NUM_SIM"]] <- num.sim
   
   return(config)
 }
