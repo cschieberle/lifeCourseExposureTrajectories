@@ -12,7 +12,6 @@ par_lifeTrajSim <- function(sim.id, INDIV_AGE, INDIV_SEX, INDIV_ACT, INDIV_EDU) 
   NUM_SIM <- config[["NUM_SIM"]]
   
   life.traj <- simulate(
-    df,
     st,
     indiv.age <- INDIV_AGE,
     indiv.sex <- INDIV_SEX,

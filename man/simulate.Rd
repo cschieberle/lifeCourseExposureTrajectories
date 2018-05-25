@@ -4,20 +4,18 @@
 \alias{simulate}
 \title{Simulates life trajectories}
 \usage{
-simulate(df, st, indiv.age, indiv.sex, indiv.activity, AGE.STEP = 3)
+simulate(st, indiv.age, indiv.sex, indiv.activity, age.step = 3)
 }
 \arguments{
-\item{df}{df}
+\item{st}{Sequence tree.}
 
-\item{st}{st}
+\item{indiv.age}{Age of the individual.}
 
-\item{indiv.age}{indiv.age}
+\item{indiv.sex}{Sex of the individual.}
 
-\item{indiv.sex}{indiv.sex}
+\item{indiv.activity}{Activity of the individual at the given age.}
 
-\item{indiv.activity}{indiv.activity}
-
-\item{AGE.STEP}{AGE.STEP}
+\item{age.step}{Number of additional age steps per given sequence (defaults to 3 due to sequence length of 4)}
 }
 \description{
 Simulates life trajectories

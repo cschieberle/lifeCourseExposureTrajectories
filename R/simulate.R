@@ -29,18 +29,18 @@ data.scodes <- c(
 
 #' Simulates life trajectories
 #'
-#' @param df df
-#' @param st st
-#' @param indiv.age indiv.age
-#' @param indiv.sex indiv.sex
-#' @param indiv.activity indiv.activity
-#' @param AGE.STEP AGE.STEP
+#' @param st Sequence tree.
+#' @param indiv.age Age of the individual.
+#' @param indiv.sex Sex of the individual.
+#' @param indiv.activity Activity of the individual at the given age.
+#' @param age.step Number of additional age steps per given sequence (defaults to 3 due to sequence length of 4)
 #' @export
 #
-simulate <- function(df, st, indiv.age, indiv.sex, indiv.activity, AGE.STEP = 3) {
+simulate <- function(st, indiv.age, indiv.sex, indiv.activity, age.step = 3) {
   
   traj <- data.frame()
-  
+  df <- lifeCourseExposureTrajectories::traversePreOrder(st$root)
+
   message(paste("simulation: [age = ", indiv.age, ", sex = ", indiv.sex, ", activity = ", indiv.activity, "]" ))
   
   # store original information and first
@@ -100,7 +100,7 @@ simulate <- function(df, st, indiv.age, indiv.sex, indiv.activity, AGE.STEP = 3)
     #    "(", act.seq.in.node$ECON.STATUS.CURR.SELFDEF.3, ")"
     #  )
     #)
-    indiv.age <- indiv.age + AGE.STEP
+    indiv.age <- indiv.age + age.step
     
     # set activity to the LAST activity in the 4-year sequence (as we continue the PROSPECTIVE analysis)
     indiv.activity <- act.seq.in.node$ECON.STATUS.CURR.SELFDEF.3
@@ -111,8 +111,8 @@ simulate <- function(df, st, indiv.age, indiv.sex, indiv.activity, AGE.STEP = 3)
   indiv.age <- orig.age
   indiv.activity <- orig.activity
   
-  while ((indiv.age - AGE.STEP) >= 16) {
-    indiv.age <- indiv.age - AGE.STEP
+  while ((indiv.age - age.step) >= 16) {
+    indiv.age <- indiv.age - age.step
     
     node.id <- getNodeId(df, indiv.age, indiv.sex)
     node <- findNodeById(st$root, node.id)

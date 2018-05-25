@@ -18,7 +18,6 @@ par_lifeCourseExposure <- function(i) {
   clusterEvalQ(cl, library(parallel))
   
   clusterExport(cl, "config")
-  clusterExport(cl, "df")
   clusterExport(cl, "st")
   clusterExport(cl, "data.seq")
   clusterExport(cl, "individuals")
