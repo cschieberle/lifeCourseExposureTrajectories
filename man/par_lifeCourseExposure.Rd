@@ -4,14 +4,10 @@
 \alias{par_lifeCourseExposure}
 \title{Prallel estimation of life-long exposure of the given individual.}
 \usage{
-par_lifeCourseExposure(i, num.cores = NUM_CORES, cluster.type = "PSOCK")
+par_lifeCourseExposure(i)
 }
 \arguments{
 \item{i}{Index of individual.}
-
-\item{num.cores}{Number of cores used.}
-
-\item{cluster.type}{Type of cluster, e.g. MPI. Defaults to PSOCK.}
 }
 \description{
 Prallel estimation of life-long exposure of the given individual.

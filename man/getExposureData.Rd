@@ -4,7 +4,7 @@
 \alias{getExposureData}
 \title{Reads individual-specific daily exposure data from a given path.}
 \usage{
-getExposureData(INDIV_SUBJID, stressors, PATH)
+getExposureData(INDIV_SUBJID, stressors)
 }
 \description{
 It is assumed that there is a subfolder for each individual stressor.

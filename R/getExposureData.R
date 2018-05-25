@@ -10,7 +10,9 @@ library(readxl)
 #' @param PATH
 #' @export
 #
-getExposureData <- function(INDIV_SUBJID, stressors, PATH) {
+getExposureData <- function(INDIV_SUBJID, stressors) {
+  PATH <- config[["PATH"]]
+  
   message(paste0("Reading daily exposure data -- subject ID: ", INDIV_SUBJID, " // path: ", PATH))
   exposure.all <- NULL
   

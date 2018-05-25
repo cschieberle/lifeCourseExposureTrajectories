@@ -5,23 +5,19 @@ library(parallel)
 #' Prallel estimation of life-long exposure of the given individual.
 #'
 #' @param i Index of individual.
-#' @param num.cores Number of cores used.
-#' @param cluster.type Type of cluster, e.g. MPI. Defaults to PSOCK.
 #' @export
 #
-par_lifeCourseExposure <- function(i, num.cores = NUM_CORES, cluster.type = "PSOCK") {
+par_lifeCourseExposure <- function(i) {
   
   message(individuals$id[i])
   
-  cl <- parallel::makeCluster(num.cores, cluster.type)
-  #cl <- makeCluster(mpi.universe.size() - 2, type="MPI" )
-  
+  cl <- parallel::makeCluster(config[["NUM_CORES"]], config[["CLUSTER_TYPE"]])
+
   clusterEvalQ(cl, library(lifeCourseExposureTrajectories))
   clusterEvalQ(cl, library(readxl))
   clusterEvalQ(cl, library(parallel))
   
-  clusterExport(cl, "NUM_SIM")
-  clusterExport(cl, "NUM_CORES")
+  clusterExport(cl, "config")
   clusterExport(cl, "df")
   clusterExport(cl, "st")
   clusterExport(cl, "data.seq")
@@ -51,8 +47,7 @@ par_lifeCourseExposure <- function(i, num.cores = NUM_CORES, cluster.type = "PSO
   
   exposure.all <- lifeCourseExposureTrajectories::getExposureData(
     INDIV_SUBJID, 
-    PATH, 
-    stressors = c("NO2", "UV", "EMF")
+    stressors = config[["stressors"]]
   )
   stopifnot( length(unique(exposure.all$sample_ID)) == 1 )
   
@@ -153,7 +148,7 @@ par_lifeCourseExposure <- function(i, num.cores = NUM_CORES, cluster.type = "PSO
   d$EXP_MEAN <- -1
   d$EXP_SD <- -1
   
-    sample.exp.all <- data.frame(INDIV_SUBJID = NULL, STRESSOR = NULL, value = NULL, age = NULL)
+  sample.exp.all <- data.frame(INDIV_SUBJID = NULL, STRESSOR = NULL, value = NULL, age = NULL)
   
   parallel.sample.exposure <- function(j) {
     subjid   <- d[ j, ]$INDIV_SUBJID
@@ -163,8 +158,7 @@ par_lifeCourseExposure <- function(i, num.cores = NUM_CORES, cluster.type = "PSO
     sim.exposure.subset <- subset(sim.exposure.all, INDIV_SUBJID == subjid & STRESSOR == stressor & AGE == age)
     
     sample.rownames <- sample(
-      #size = 200,
-      size = 100,
+      size = config[["SAMPLE_SIZE"]],
       x = rownames(sim.exposure.subset),
       prob = sim.exposure.subset$total.prob,
       replace = T
@@ -175,8 +169,7 @@ par_lifeCourseExposure <- function(i, num.cores = NUM_CORES, cluster.type = "PSO
       return(
         data.frame(
           triangle::rtriangle(
-            #n = 400,
-            n = 150,
+            n = config[["SAMPLE_SIZE"]],
             a = min(sim.exposure.subset[ r, ]$X2.5._percentile, sim.exposure.subset[ r, ]$mean),
             b = max(sim.exposure.subset[ r, ]$mean, sim.exposure.subset[ r, ]$X97.5._percentile),
             c = median(c(sim.exposure.subset[ r, ]$X2.5._percentile, sim.exposure.subset[ r, ]$mean, sim.exposure.subset[ r, ]$X97.5._percentile))

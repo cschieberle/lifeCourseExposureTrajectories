@@ -9,6 +9,7 @@
 #' @export
 #
 par_lifeTrajSim <- function(sim.id, INDIV_AGE, INDIV_SEX, INDIV_ACT, INDIV_EDU) {
+  NUM_SIM <- config[["NUM_SIM"]]
   
   life.traj <- simulate(
     df,
@@ -62,6 +63,8 @@ par_lifeTrajSim <- function(sim.id, INDIV_AGE, INDIV_SEX, INDIV_ACT, INDIV_EDU) 
 #' @export
 #
 determineFullTraj <- function(INDIV_SUBJID, INDIV_AGE, INDIV_SEX, INDIV_EDU, INDIV_ACT) {
+  NUM_SIM <- config[["NUM_SIM"]]
+  
   sim.results.rshp <- mclapply(
     seq(1:NUM_SIM),
     par_lifeTrajSim, INDIV_AGE = INDIV_AGE, INDIV_SEX = INDIV_SEX, INDIV_ACT = INDIV_ACT, INDIV_EDU = INDIV_EDU
