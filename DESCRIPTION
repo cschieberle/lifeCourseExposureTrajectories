@@ -11,7 +11,7 @@ Description: This package supports the estimation of individual or population
     habits allows for an estimation of exposure to multiple stressors specific to
     the situation in a certain stage of life. The package was developed in the scope
     of the HEALS project at IER, University of Stuttgart.
-Depends: caret (>= 6.0-78), triangle(>= 0.11), randomForest (>= 4.6-12), igraph (>= 1.1.2), data.table (>= 1.10.4), readxl (>= 1.0.0), TraMineR (>= 2.0-7), WeightedCluster (>= 1.2-1), R (>= 3.2.3)
+Depends: caret (>= 6.0-78), triangle(>= 0.11), plyr (>= 1.8.4), randomForest (>= 4.6-12), igraph (>= 1.1.2), data.table (>= 1.10.4), readxl (>= 1.0.0), TraMineR (>= 2.0-7), WeightedCluster (>= 1.2-1), R (>= 3.2.3)
 License: Don't know yet... Not currently intended to be used by someone else but
     myself :)
 Encoding: UTF-8

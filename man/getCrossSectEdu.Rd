@@ -7,6 +7,12 @@ current education type.}
 \usage{
 getCrossSectEdu(cs.data.all, country.filter = NULL)
 }
+\arguments{
+\item{cs.data.all}{Cross-sectional education data including at least these variables: 
+ECON.STATUS.CURR.SELFDEF, CURRENT.EDU.TYPE.LABEL, HIGHEST.ATTAINED.EDU.LABEL, ESTIMATED.AGE, SEX, and TOT.DISP.HH.INCOME.}
+
+\item{country.filter}{Only return data related to the given countries. By default all data are returned.}
+}
 \description{
 Determine cross-sectional education data in terms of highest attained educational level and 
 current education type.
