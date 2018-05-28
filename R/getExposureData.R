@@ -5,38 +5,26 @@ library(readxl)
 #' It is assumed that there is a subfolder for each individual stressor.
 #' Furthermore, it is assumed that one separate file per individual is given.
 #'
-#' @param INDIV_SUBJID
-#' @param stressors
-#' @param PATH
+#' @param indiv.id The identifier of an individual.
+#' @param stressors List of stressors to be assessed.
 #' @export
 #
-getExposureData <- function(INDIV_SUBJID, stressors) {
-  PATH <- config[["PATH"]]
+getExposureData <- function(indiv.id, stressors) {
+  exposure.data.path <- config[["PATH_EXPOSURE"]]
+  employment.mapping.file <- config[["EMPLOYMENT_MAPPING"]] 
   
-  message(paste0("Reading daily exposure data -- subject ID: ", INDIV_SUBJID, " // path: ", PATH))
+  message(paste0("Reading daily exposure data -- subject ID: ", indiv.id, " // path: ", exposure.data.path))
   exposure.all <- NULL
   
   for (stressor in stressors) {
     message(stressor)
-    daily.exposure <- read.csv(paste0(PATH, "\\ITR sample exposure_for Cara\\", stressor, "\\", stressor, "_exposure_sample_", INDIV_SUBJID, ".csv"))
+    daily.exposure <- read.csv(paste0(exposure.data.path, "/", stressor, "/", stressor, "_exposure_sample_", indiv.id, ".csv"))
     daily.exposure$STRESSOR <- stressor
     
     exposure.all <- rbind(exposure.all, daily.exposure)
   }
 
-  # exposure.Chromium <- read.csv(paste0(PATH, "\\ITR sample exposure_for Cara\\Food intake\\Chromium\\Chromium_exposure_sample_", INDIV_SUBJID, ".csv"))
-  # exposure.Chromium$STRESSOR <- "Chromium"
-  # names(exposure.Chromium)
-  # exposure.Chromium$income <- NA
-  # exposure.Chromium$empstat <- -1000
-  # exposure.Chromium$occup <- NA
-  # exposure.Chromium$type <- NA
-  # exposure.Chromium$comment <- NA
-  # exposure.Chromium$retired <- -1000
-  # exposure.Chromium$emp <- -1000
-  # exposure.Chromium$student <- -1000
- 
-  emp.map <- readxl::read_excel(paste0(PATH, "\\LET\\employment_mapping.xlsx"), sheet = "employment_mapping")
+  emp.map <- readxl::read_excel(employment.mapping.file)
   emp.map <- emp.map[, c("EMP.scode", "empstat", "emp", "student", "retired")]
   
   # merge exposure data using MTUS 'empstat' nomenclature and employment type (or economic status) from EU-SILC named here 'EMP.scode'
@@ -49,6 +37,5 @@ getExposureData <- function(INDIV_SUBJID, stressors) {
   # move 'EMP.scode" to be the first column
   exposure.all <- exposure.all[c("STRESSOR", "EMP.scode", setdiff(names(exposure.all), list("STRESSOR", "EMP.scode")))]
   
-  #sort(unique(exposure.all[ exposure.all$sample_ID == INDIV_SUBJID, ]$age))
-  return( exposure.all )
+  return(exposure.all)
 }

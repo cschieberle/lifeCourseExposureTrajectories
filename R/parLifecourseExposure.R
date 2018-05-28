@@ -8,6 +8,11 @@ library(parallel)
 #' @export
 #
 par_lifeCourseExposure <- function(i) {
+  path.out <- config[["PATH_OUTPUT"]]
+  if (config[["WRITE_OUTPUT"]]) {
+    dir.create(file.path(path.out), showWarnings = FALSE)
+  }
+  
   
   message(individuals$id[i])
   
@@ -36,12 +41,13 @@ par_lifeCourseExposure <- function(i) {
   )$ECON.STATUS.CURR.SELFDEF
   INDIV_ACT <- data.scodes[ sample(econ.stat, 1) ]
   
-  #sim.results.grpd <- par_determineFullTraj(cl, INDIV_SUBJID, INDIV_AGE, INDIV_SEX, INDIV_EDU, INDIV_ACT)
   sim.results.grpd <- lifeCourseExposureTrajectories::determineFullTraj(INDIV_SUBJID, INDIV_AGE, INDIV_SEX, INDIV_EDU, INDIV_ACT)
   
   stopifnot( length(unique(sim.results.grpd$INDIV_SUBJID)) == 1 )
   
-  ##write.csv(sim.results.grpd, file = paste0("C:\\TEMP\\sim-out\\lifetraj-", INDIV_SUBJID, ".csv"), row.names=F)
+  if (config[["WRITE_OUTPUT"]]) {
+    write.csv(sim.results.grpd, file = paste0(path.out, "/", INDIV_SUBJID, "-lifetraj.csv"), row.names=F)
+  }
   message("Daily exposures ...")
   
   exposure.all <- lifeCourseExposureTrajectories::getExposureData(
@@ -52,11 +58,7 @@ par_lifeCourseExposure <- function(i) {
   
   # impute based on 'surrounding' age for same individual if data for specific age is missing
   
-  #sim.lifetraj <- subset(sim.results.grpd, INDIV_SUBJID == INDIV_SUBJID)
   sim.lifetraj <- sim.results.grpd
-  
-  #clusterExport(cl, "sim.lifetraj")
-  #clusterExport(cl, "exposure.all")
   
   parallel.gapfill.exposure <- function(stressor, INDIV_SUBJID, INDIV_AGE) {
     exposure.add <- data.frame()
@@ -101,21 +103,15 @@ par_lifeCourseExposure <- function(i) {
   exposure.all <- rbind(exposure.all, t)
   stopifnot( length(unique(exposure.all$sample_ID)) == 1 )
   
-  #sort(unique(exposure.all[ exposure.all$sample_ID == INDIV_SUBJID & exposure.all$STRESSOR == sim.stressor, ]$age))
-  #summary(exposure.all)
-  
-  #
   sim.exposure.all <- merge(
     x = sim.results.grpd,
     y = exposure.all,
     by.x = c("INDIV_SUBJID", "AGE", "EMP.scode"),
     by.y = c("sample_ID", "age", "EMP.scode")
-    #suffixes = c("SIM", "EXP"),
   )
   stopifnot( length(unique(sim.exposure.all$INDIV_SUBJID)) == 1 )
-  #sort(unique(sim.exposure.all$AGE))
-  
-    # determine relative weight of exposure estimate per (age, EMP.scode)-combination based on
+
+  # determine relative weight of exposure estimate per (age, EMP.scode)-combination based on
   # the number of original diaries that were used for estimation
   #
   # equal weight could be reached by replacing the 'aggregate' statement below by
@@ -132,7 +128,9 @@ par_lifeCourseExposure <- function(i) {
   # determine total probability per row ...
   sim.exposure.all$total.prob <- sim.exposure.all$EMP.probability * sim.exposure.all$EMP.map.prob
   
-  ##write.csv(sim.exposure.all, file = paste0("C:\\TEMP\\sim-out\\exposure-map-", INDIV_SUBJID, ".csv"), row.names=F)
+  if (config[["WRITE_OUTPUT"]]) {
+    write.csv(sim.exposure.all, file = paste0(path.out, "/", INDIV_SUBJID, "-exposure-map.csv"), row.names=F)
+  }
   
   # ... and sample accordingly
   d <- unique(sim.exposure.all[ c("INDIV_SUBJID", "STRESSOR", "AGE") ])
@@ -197,9 +195,7 @@ par_lifeCourseExposure <- function(i) {
   
   clusterEvalQ(cl, library(triangle))
   clusterEvalQ(cl, library(parallel))
-  #clusterExport(cl, "d")
-  #clusterExport(cl, "sim.exposure.all")
-  
+
   sample.exp.t <- parLapply(
     cl,
     c(1:nrow(d)),
@@ -208,11 +204,9 @@ par_lifeCourseExposure <- function(i) {
   t <- do.call(rbind.data.frame, sample.exp.t)
   sample.exp.all <- rbind(sample.exp.all, t)
   
-  #names(d)
-  #sort(unique(sample.exp.all$age))
-  #summary(sample.exp.all)
-  
-  ##write.csv(sample.exp.all, file = paste0("N:\\tfu\\552_HEALS\\Projektarbeit\\WP11\\LET\\sim-out\\exposure-samples-", INDIV_SUBJID, ".csv"), row.names=F)
+  if (config[["WRITE_OUTPUT"]]) {
+    write.csv(sample.exp.all, file = paste0(path.out, "/", INDIV_SUBJID, "-exposure-samples.csv"), row.names=F)
+  }
   
   # name critical life stages ...
   sample.exp.all$CRITICAL_LIFE_STAGE <- ""
@@ -265,8 +259,9 @@ par_lifeCourseExposure <- function(i) {
   )
   
   names(sample.exp.stats) <- c("INDIV_SUBJID", "STRESSOR", "CRITICAL_LIFE_STAGE", "value.2.5PCT", "value.25PCT", "value.50PCT", "value.75PCT", "value.97.5PCT", "value.MEAN", "value.SD")
-  ##write.csv(sample.exp.stats, file = paste0("C:\\TEMP\\sim-out\\exposure-stats-", INDIV_SUBJID, ".csv"), row.names=F)
+  if (config[["WRITE_OUTPUT"]]) {
+    write.csv(sample.exp.stats, file = paste0(path.out, "/", INDIV_SUBJID, "-exposure-stats.csv"), row.names=F)
+  }
   
-  #return( sample.exp.all )
   return( sample.exp.stats )
 }

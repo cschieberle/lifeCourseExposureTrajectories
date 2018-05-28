@@ -4,7 +4,24 @@
 \alias{defaultConfig}
 \title{Default configuration for this package.}
 \usage{
-defaultConfig(path = ".", sample.size = 1000)
+defaultConfig(path = ".", subfolder.output = NULL, write.output = T,
+  subfolder.exposure = NULL, employment.mapping = NULL, num.sim = 100,
+  sample.size = 1000)
+}
+\arguments{
+\item{path}{Base path for input and output.}
+
+\item{subfolder.output}{Output subfolder to store intermediate and result files.}
+
+\item{write.output}{Whether to write output files. If true, this may slow down execution time.}
+
+\item{subfolder.exposure}{Subfolder of the base path which contains exposure data (again subfolder for each stressor).}
+
+\item{employment.mapping}{Employment mapping file within the exposure subfolder.}
+
+\item{num.sim}{Number of trajectory simulations to be conducted.}
+
+\item{sample.size}{Sample size of exposure data.}
 }
 \description{
 Default configuration for this package.
