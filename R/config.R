@@ -19,7 +19,7 @@ defaultConfig <- function(path = ".", subfolder.output = NULL, write.output = T,
   if (!is.null(subfolder.output)) {
     config[["PATH_OUTPUT"]] <- paste0(path, '/', subfolder.output)
   } else {
-    if (!is.null(config[["PATH_OUTPUT"]])) {
+    if (is.null(config[["PATH_OUTPUT"]])) {
       config[["PATH_OUTPUT"]] <- paste0(path, '/output')
     }
   }
@@ -28,7 +28,7 @@ defaultConfig <- function(path = ".", subfolder.output = NULL, write.output = T,
   if (!is.null(subfolder.exposure)) {
     config[["PATH_EXPOSURE"]] <- paste0(path, '/', subfolder.exposure)
   } else {
-    if (!is.null(config[["PATH_EXPOSURE"]])) {
+    if (is.null(config[["PATH_EXPOSURE"]])) {
       config[["PATH_EXPOSURE"]] <- paste0(path, '/data')
     }
   }
@@ -36,7 +36,7 @@ defaultConfig <- function(path = ".", subfolder.output = NULL, write.output = T,
   if (!is.null(employment.mapping)) {
     config[["EMPLOYMENT_MAPPING"]] <- paste0(config[["PATH_EXPOSURE"]], '/', employment.mapping)
   } else {
-    if (!is.null(config[["EMPLOYMENT_MAPPING"]])) {
+    if (is.null(config[["EMPLOYMENT_MAPPING"]])) {
       config[["EMPLOYMENT_MAPPING"]] <- paste0(config[["PATH_EXPOSURE"]], '/employment_mapping.xlsx')
     }
   }
