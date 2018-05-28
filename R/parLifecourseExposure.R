@@ -13,9 +13,8 @@ par_lifeCourseExposure <- function(i) {
     dir.create(file.path(path.out), showWarnings = FALSE)
   }
   
-  
-  message(individuals$id[i])
-  
+    message(individuals[[i]]@id)
+
   cl <- parallel::makeCluster(config[["NUM_CORES"]], config[["CLUSTER_TYPE"]])
 
   clusterEvalQ(cl, library(lifeCourseExposureTrajectories))
@@ -29,11 +28,11 @@ par_lifeCourseExposure <- function(i) {
 
   #sim.results <- NULL
   
-  INDIV_SUBJID <- individuals$id[i]
-  INDIV_AGE <- individuals$age[i]
-  INDIV_SEX <- ifelse(as.character(individuals$sex[i]) == "M", 1, 2)
+  INDIV_SUBJID <- individuals[[i]]@id
+  INDIV_AGE <- individuals[[i]]@age
+  INDIV_SEX <- ifelse(as.character(individuals[[i]]@sex) == "M", 1, 2)
   
-  INDIV_EDU <- individuals$edulevel[i]
+  INDIV_EDU <- individuals[[i]]@edulevel
   
   econ.stat <- subset(
     edu.data, 
