@@ -1,3 +1,8 @@
+
+# Class for an individual person.
+# 
+#' @export
+#
 Individual <- setClass(
   "Individual",
   
@@ -9,9 +14,13 @@ Individual <- setClass(
   ),
   
   prototype = list(
-    NULL, 
-    0, 
-    0, 
-    0
-  )
+    id = NULL, 
+    age = 0, 
+    sex = 0, 
+    edulevel = 0
+  ),
+  
+  validity = function(object) {
+    return(TRUE)
+  }
 )
