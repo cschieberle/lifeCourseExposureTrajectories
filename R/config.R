@@ -23,6 +23,10 @@ defaultConfig <- function(path = ".", subfolder.output = NULL, write.output = T,
       config[["PATH_OUTPUT"]] <- paste0(path, '/output')
     }
   }
+  
+  # Create output folder for cluster log file; otherwise makeCluster with output file given may hang ..
+  dir.create(file.path(config[["PATH_OUTPUT"]]), showWarnings = FALSE)
+  
   config[["WRITE_OUTPUT"]] <- write.output
   
   if (!is.null(subfolder.exposure)) {
@@ -47,6 +51,11 @@ defaultConfig <- function(path = ".", subfolder.output = NULL, write.output = T,
   
   config[["SAMPLE_SIZE"]] <- sample.size
   config[["NUM_SIM"]] <- num.sim
+  
+  config[["CSV_SEP"]] <- ','
+  config[["CSV_DEC"]] <- '.'
+  
+  config[["CLUSTER_OUTFILE"]] <- ""
   
   return(config)
 }

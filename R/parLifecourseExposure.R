@@ -1,6 +1,7 @@
 library(plyr)
 library(triangle)
 library(parallel)
+library(data.table)
 
 #' Prallel estimation of life-long exposure of the given individual.
 #'
@@ -9,25 +10,16 @@ library(parallel)
 #
 par_lifeCourseExposure <- function(i) {
   path.out <- config[["PATH_OUTPUT"]]
-  if (config[["WRITE_OUTPUT"]]) {
-    dir.create(file.path(path.out), showWarnings = FALSE)
-  }
   
-    message(individuals[[i]]@id)
+  message(individuals[[i]]@id)
 
-  cl <- parallel::makeCluster(config[["NUM_CORES"]], config[["CLUSTER_TYPE"]])
+  cl <- parallel::makeCluster(config[["NUM_CORES"]], config[["CLUSTER_TYPE"]], outfile = config[["CLUSTER_OUTFILE"]])
 
-  clusterEvalQ(cl, library(lifeCourseExposureTrajectories))
-  clusterEvalQ(cl, library(readxl))
-  clusterEvalQ(cl, library(parallel))
-  
-  clusterExport(cl, "config")
-  clusterExport(cl, "st")
-  clusterExport(cl, "data.seq")
-  clusterExport(cl, "individuals")
+  clusterEvalQ(cl, library(lifeCourseExposureTrajectories, quietly = T))
+  clusterEvalQ(cl, library(readxl, quietly = T))
+  clusterEvalQ(cl, library(parallel, quietly = T))
+  clusterExport(cl, varlist = c("config", "st", "data.seq", "individuals"))
 
-  #sim.results <- NULL
-  
   INDIV_SUBJID <- individuals[[i]]@id
   INDIV_AGE <- individuals[[i]]@age
   INDIV_SEX <- ifelse(as.character(individuals[[i]]@sex) == "M", 1, 2)
@@ -53,13 +45,16 @@ par_lifeCourseExposure <- function(i) {
     INDIV_SUBJID, 
     stressors = config[["stressors"]]
   )
-  stopifnot( length(unique(exposure.all$sample_ID)) == 1 )
+  message("# of rows returned from getExposureData: ", nrow(exposure.all))
+  
+  stopifnot( length(unique(exposure.all$identifier)) == 1 )
   
   # impute based on 'surrounding' age for same individual if data for specific age is missing
   
   sim.lifetraj <- sim.results.grpd
   
   parallel.gapfill.exposure <- function(stressor, INDIV_SUBJID, INDIV_AGE) {
+    message("Gap-filling ", stressor, " for ", INDIV_SUBJID)
     exposure.add <- data.frame()
     
     for (t in c(1:nrow(sim.lifetraj))) {
@@ -74,7 +69,7 @@ par_lifeCourseExposure <- function(i) {
         while (nrow(exposure.subset) <= 0 & age.diff < 10) {
           exposure.subset <- subset(
             exposure.all, 
-            sample_ID == INDIV_SUBJID & 
+            identifier == INDIV_SUBJID & 
               (age >= sim.age - age.diff & age <= sim.age + age.diff) &
               EMP.scode == sim.emp.scode &
               STRESSOR == stressor
@@ -90,24 +85,45 @@ par_lifeCourseExposure <- function(i) {
       }
       
     }
-    return( exposure.add )
+    message("Gapfilling done: ", nrow(exposure.add))
+    
+    return(exposure.add)
   }
   
-  exposure.temp <- parLapply(
-    cl,
-    unique(exposure.all$STRESSOR), 
+  # Add "comment" column, if missing
+  if (!("comment" %in% names(exposure.all))) {
+    exposure.all$comment <- rep("", times = nrow(exposure.all))
+  }
+  # Add "type" column, if missing
+  if (!("type" %in% names(exposure.all))) {
+    exposure.all$type <- rep("", times = nrow(exposure.all))
+  }
+
+  exposure.temp <- mclapply(
+  #exposure.temp <- lapply(
+    unique(exposure.all$STRESSOR),
     parallel.gapfill.exposure, INDIV_SUBJID=INDIV_SUBJID, INDIV_AGE=INDIV_AGE
   )
-  t <- do.call(rbind.data.frame, exposure.temp)
+  t <- data.table::rbindlist(exposure.temp)
+
   exposure.all <- rbind(exposure.all, t)
-  stopifnot( length(unique(exposure.all$sample_ID)) == 1 )
+  stopifnot( length(unique(exposure.all$identifier)) == 1 )
+  
+  message("# of rows of gap-filled exposure data: ", nrow(exposure.all))
   
   sim.exposure.all <- merge(
     x = sim.results.grpd,
     y = exposure.all,
     by.x = c("INDIV_SUBJID", "AGE", "EMP.scode"),
-    by.y = c("sample_ID", "age", "EMP.scode")
+    by.y = c("identifier", "age", "EMP.scode")
   )
+  message("nrow(sim.exposure.all): ", nrow(sim.exposure.all))
+
+  # Add "count" column, if missing
+  if (!("count" %in% names(sim.exposure.all))) {
+    sim.exposure.all$count <- rep(1, times = nrow(sim.exposure.all))
+  }
+  
   stopifnot( length(unique(sim.exposure.all$INDIV_SUBJID)) == 1 )
 
   # determine relative weight of exposure estimate per (age, EMP.scode)-combination based on
@@ -173,7 +189,9 @@ par_lifeCourseExposure <- function(i) {
         )
       )
     }
+    
     sample.exp.temp <- mclapply(
+    #sample.exp.temp <- lapply(
       sample.rownames,
       FUN=parallel.sample.exposure.inner
     )
@@ -192,8 +210,8 @@ par_lifeCourseExposure <- function(i) {
     )
   }
   
-  clusterEvalQ(cl, library(triangle))
-  clusterEvalQ(cl, library(parallel))
+  clusterEvalQ(cl, library(triangle, quietly = T))
+  clusterEvalQ(cl, library(parallel, quietly = T))
 
   sample.exp.t <- parLapply(
     cl,
