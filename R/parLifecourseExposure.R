@@ -111,6 +111,8 @@ par_lifeCourseExposure <- function(i) {
   
   message("# of rows of gap-filled exposure data: ", nrow(exposure.all))
   
+  sim.results.grpd$traj_id <- rownames(sim.results.grpd)
+  
   sim.exposure.all <- merge(
     x = sim.results.grpd,
     y = exposure.all,
@@ -162,6 +164,8 @@ par_lifeCourseExposure <- function(i) {
   
   sample.exp.all <- data.frame(INDIV_SUBJID = NULL, STRESSOR = NULL, value = NULL, age = NULL)
   
+  # j is the rowname in dataframe d, so it corresponds to a certain age and stressor combination
+  # of an individual
   parallel.sample.exposure <- function(j) {
     subjid   <- d[ j, ]$INDIV_SUBJID
     stressor <- d[ j, ]$STRESSOR
@@ -175,16 +179,16 @@ par_lifeCourseExposure <- function(i) {
       prob = sim.exposure.subset$total.prob,
       replace = T
     )
-    
+
     sample.exp <- data.frame(value = NULL)
     parallel.sample.exposure.inner <- function(r) {
       return(
         data.frame(
           triangle::rtriangle(
             n = config[["SAMPLE_SIZE"]],
-            a = min(sim.exposure.subset[ r, ]$X2.5._percentile, sim.exposure.subset[ r, ]$mean),
-            b = max(sim.exposure.subset[ r, ]$mean, sim.exposure.subset[ r, ]$X97.5._percentile),
-            c = median(c(sim.exposure.subset[ r, ]$X2.5._percentile, sim.exposure.subset[ r, ]$mean, sim.exposure.subset[ r, ]$X97.5._percentile))
+            a = min(sim.exposure.subset[ r, ]$X2.5_percentile, sim.exposure.subset[ r, ]$mean),
+            b = max(sim.exposure.subset[ r, ]$mean, sim.exposure.subset[ r, ]$X97.5_percentile),
+            c = median(c(sim.exposure.subset[ r, ]$X2.5_percentile, sim.exposure.subset[ r, ]$mean, sim.exposure.subset[ r, ]$X97.5_percentile))
           )
         )
       )
